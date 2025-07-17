@@ -1,0 +1,91 @@
+/* src/styles/JournalEntryForm.css */
+.journal-entry-form {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #fdfdff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.journal-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+.journal-table th,
+.journal-table td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.journal-table th {
+  background-color: #f7f9fc;
+  font-weight: 600;
+  color: #333;
+}
+
+.journal-table input[type="text"],
+.journal-table input[type="number"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.journal-table input[type="number"] {
+  text-align: right;
+}
+
+.journal-table tfoot td {
+  font-weight: bold;
+}
+
+.total-cell {
+  text-align: right !important;
+}
+
+.add-line-button {
+  background-color: #28a745; /* Green */
+  color: white;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+}
+.add-line-button:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.account-cell {
+  position: relative; /* For positioning the suggestions list */
+}
+
+.suggestions-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-top: none;
+  background-color: white;
+  position: absolute;
+  width: 100%; /* Match input width */
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 1000; /* Ensure it's above other elements */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  border-radius: 0 0 4px 4px;
+}
+
+.suggestions-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.suggestions-list li:hover {
+  background-color: #f0f0f0;
+}
+
+.suggestions-list li.active-suggestion {
+  background-color: #e0e0e0;
+} 

@@ -1,155 +1,89 @@
 // src/components/JournalLine.js
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-const JournalLine = ({ line, index, updateLine, leaseType }) => {
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState(-1);
-  
-  // Define standard account names based on lease type
-  const getAccountOptions = () => {
-    if (leaseType === 'finance') {
-      return [
-        'Interest Expense',
-        'Lease Liability',
-        'Cash',
-        'Amortization Expense (ROU Asset)',
-        'Accumulated Amortization - ROU Asset'
-      ];
-    } else {
-      return [
-        'Lease Expense',
-        'Cash',
-        'Right-of-Use Asset',
-        'Lease Liability'
-      ];
-    }
-  };
-
-  // Filter suggestions based on input
-  const handleInputChange = (e) => {
-    const value = e.target.value;
-    updateLine(line.id, 'account', value);
-    
-    if (value.length > 0) {
-      const filteredSuggestions = getAccountOptions().filter(
-        option => option.toLowerCase().includes(value.toLowerCase())
-      );
-      setSuggestions(filteredSuggestions);
-      setShowSuggestions(true);
-      setSelectedIndex(0); // Select first suggestion by default
-    } else {
-      setShowSuggestions(false);
-      setSelectedIndex(-1);
-    }
-  };
-
-  // Handle keyboard navigation
-  const handleKeyDown = (e) => {
-    if (!showSuggestions) return;
-
-    switch (e.key) {
-      case 'Tab':
-        e.preventDefault();
-        if (suggestions.length > 0) {
-          selectSuggestion(suggestions[selectedIndex]);
-        }
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        setSelectedIndex(prev => 
-          prev < suggestions.length - 1 ? prev + 1 : prev
-        );
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        setSelectedIndex(prev => prev > 0 ? prev - 1 : prev);
-        break;
-      case 'Enter':
-        e.preventDefault();
-        if (suggestions.length > 0) {
-          selectSuggestion(suggestions[selectedIndex]);
-        }
-        break;
-      default:
-        break;
-    }
-  };
-
-  // Select a suggestion
-  const selectSuggestion = (suggestion) => {
-    updateLine(line.id, 'account', suggestion);
-    setShowSuggestions(false);
-    setSelectedIndex(-1);
-  };
-
-  // Close suggestions when clicking outside
-  useEffect(() => {
-    const handleClickOutside = () => {
-      setShowSuggestions(false);
-      setSelectedIndex(-1);
-    };
-
-    document.addEventListener('click', handleClickOutside);
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
+const AccountDropdown = ({ value, onChange, disabled, className }) => {
+  const accountOptions = [
+    { value: '', label: 'Select Account...' },
+    { value: 'Fixed Asset', label: 'Fixed Asset' },
+    { value: 'Accumulated Depreciation', label: 'Accumulated Depreciation' },
+    { value: 'Cash', label: 'Cash' },
+    { value: 'Gain on Sale', label: 'Gain on Sale' },
+    { value: 'Loss on Sale', label: 'Loss on Sale' },
+  ];
 
   return (
-    <tr className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+    <select 
+      value={value} 
+      onChange={onChange} 
+      disabled={disabled} 
+      className={className}
+    >
+      {accountOptions.map(option => (
+        <option key={option.value} value={option.value} disabled={option.value === ''}>
+          {option.label}
+        </option>
+      ))}
+    </select>
+  );
+};
+
+const JournalLine = ({ line, index, onChange, disabled }) => {
+  const handleAccountChange = (e) => {
+    if (disabled) return;
+    onChange(index, 'account', e.target.value);
+  };
+
+  const handleDebitChange = (e) => {
+    if (disabled) return;
+    const value = e.target.value === '' ? null : e.target.value;
+    onChange(index, 'debit', value);
+    if (value !== null) {
+      onChange(index, 'credit', null);
+    }
+  };
+
+  const handleCreditChange = (e) => {
+    if (disabled) return;
+    const value = e.target.value === '' ? null : e.target.value;
+    onChange(index, 'credit', value);
+    if (value !== null) {
+      onChange(index, 'debit', null);
+    }
+  };
+
+  return (
+    <tr>
       <td>
-        <div className="account-input-container">
-          <input
-            className="journal-input"
-            placeholder="Enter account name"
-            type="text"
-            value={line.account}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            onClick={(e) => e.stopPropagation()}
-            autoComplete="off"
-          />
-          {showSuggestions && suggestions.length > 0 && (
-            <ul className="suggestions-list">
-              {suggestions.map((suggestion, i) => (
-                <li 
-                  key={i} 
-                  onClick={() => selectSuggestion(suggestion)}
-                  className={`suggestion-item ${i === selectedIndex ? 'selected' : ''}`}
-                >
-                  {suggestion}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+        <AccountDropdown
+          value={line.account}
+          onChange={handleAccountChange}
+          disabled={disabled}
+          className={`account-input ${disabled ? 'disabled-input' : ''}`}
+        />
       </td>
       <td>
-        <div className="amount-input-container">
-          <span className="currency-symbol">$</span>
-          <input
-            className="amount-input"
-            placeholder="0"
-            type="number"
-            value={line.debit}
-            onChange={(e) => updateLine(line.id, 'debit', e.target.value)}
-            disabled={!!line.credit}
-          />
-        </div>
+        <input
+          type="number"
+          value={line.debit === null ? '' : line.debit}
+          onChange={handleDebitChange}
+          placeholder="0.00"
+          className={`amount-input ${disabled ? 'disabled-input' : ''}`}
+          min="0"
+          step="0.01"
+          disabled={disabled}
+        />
       </td>
       <td>
-        <div className="amount-input-container">
-          <span className="currency-symbol">$</span>
-          <input
-            className="amount-input"
-            placeholder="0"
-            type="number"
-            value={line.credit}
-            onChange={(e) => updateLine(line.id, 'credit', e.target.value)}
-            disabled={!!line.debit}
-          />
-        </div>
+        <input
+          type="number"
+          value={line.credit === null ? '' : line.credit}
+          onChange={handleCreditChange}
+          placeholder="0.00"
+          className={`amount-input ${disabled ? 'disabled-input' : ''}`}
+          min="0"
+          step="0.01"
+          disabled={disabled}
+        />
       </td>
     </tr>
   );

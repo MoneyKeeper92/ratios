@@ -1,68 +1,30 @@
-// src/utils/cookieManager.js
-import Cookies from 'js-cookie';
+const CURRENT_SCENARIO_KEY = 'ratio-practice-current';
+const COMPLETED_SCENARIOS_KEY = 'ratio-practice-completed';
 
-const COOKIE_EXPIRY_DAYS = 30;
-
-/**
- * Set a cookie with the given name, value and expiration days
- * @param {string} name - Cookie name
- * @param {string} value - Cookie value
- * @param {number} days - Expiration days (default: 30)
- */
-export const setCookie = (name, value, days = COOKIE_EXPIRY_DAYS) => {
-  Cookies.set(name, value, { expires: days, sameSite: 'strict' });
+export const setCookie = (key, value, days = 30) => {
+  const cookieName = key === 'currentScenarioIndex' ? CURRENT_SCENARIO_KEY : COMPLETED_SCENARIOS_KEY;
+  const expires = new Date();
+  expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
+  document.cookie = `${cookieName}=${value};expires=${expires.toUTCString()};path=/`;
 };
 
-/**
- * Get a cookie value by name
- * @param {string} name - Cookie name
- * @returns {string|null} - Cookie value or null if not found
- */
-export const getCookie = (name) => {
-  return Cookies.get(name) || null;
+export const getCookie = (key) => {
+  const cookieName = key === 'currentScenarioIndex' ? CURRENT_SCENARIO_KEY : COMPLETED_SCENARIOS_KEY;
+  const nameEQ = cookieName + "=";
+  const ca = document.cookie.split(';');
+  for(let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
 };
 
-/**
- * Delete a cookie by name
- * @param {string} name - Cookie name
- */
-export const deleteCookie = (name) => {
-  Cookies.remove(name);
-};
+const clearCookie = (name) => {
+  document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
 
-/**
- * Clear all cookies related to the application
- */
 export const clearAllCookies = () => {
-  const cookiesToClear = [
-    'currentScenarioIndex',
-    'completedScenarios'
-  ];
-  
-  cookiesToClear.forEach(name => deleteCookie(name));
+  clearCookie(CURRENT_SCENARIO_KEY);
+  clearCookie(COMPLETED_SCENARIOS_KEY);
 };
-
-/**
- * Save the user progress to cookies
- * @param {Object} progress - User progress object
- */
-export const saveUserProgress = (progress) => {
-  setCookie('completedScenarios', JSON.stringify(progress));
-};
-
-/**
- * Get the user progress from cookies
- * @returns {Object} - User progress object
- */
-export const getUserProgress = () => {
-  const progress = getCookie('completedScenarios');
-  return progress ? JSON.parse(progress) : {};
-};
-
-const cookieManager = {
-  getCookie,
-  setCookie,
-  clearAllCookies
-};
-
-export default cookieManager;

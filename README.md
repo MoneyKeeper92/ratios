@@ -1,70 +1,112 @@
-# Getting Started with Create React App
+# Accounting Practice Tool - Application Overview
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This document provides a detailed breakdown of how the React-based accounting practice application works, from its architecture to its data structures.
 
-## Available Scripts
+### Application Architecture and Core Components
 
-In the project directory, you can run:
+This React application is designed as a single-page practice tool for accounting students. It presents a series of problems (scenarios) and allows users to submit answers, receive immediate feedback, and review detailed solutions.
 
-### `npm start`
+Here are the key components and their roles:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1.  **`App.js` (The Conductor):**
+    *   This is the main component that orchestrates the entire application.
+    *   **State Management:** It holds all the critical state, including the list of all scenarios, the `currentId` of the scenario being viewed, and the `completedScenarios` object that tracks user progress.
+    *   **Lifecycle and Logic:** It handles navigating between scenarios, validating user submissions (`handleSubmission`), marking scenarios as complete, and saving/loading progress using browser cookies.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+2.  **Data Files (e.g., `src/data/ar-scenarios.js`):**
+    *   These files are the heart of the app's content. Each file is a JavaScript array containing multiple "scenario" objects. Each object represents a single accounting problem with all its associated data, questions, and solutions.
 
-### `npm test`
+3.  **`ScenarioDetails.js` (The Problem Statement):**
+    *   This component's job is to display the question. It receives the current scenario object from `App.js` and renders the `task` field, which is the prompt for the user.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+4.  **Input Components (e.g., `BadDebtCalc.js`, `JournalEntryForm.js`):**
+    *   These are the interactive forms where the user inputs their answer.
+    *   The application uses a router (`src/utils/componentRouter.js`) to dynamically select which input component to show based on the current scenario's `level`. For instance, `level: 1` problems use a simple numeric input, while `level: 2` problems use a multi-line journal entry form.
 
-### `npm run build`
+5.  **`SolutionComponent.js` (The Answer Key):**
+    *   When the user requests the answer, this component is displayed.
+    *   It takes the current scenario object and formats the `explanation` field into a readable, step-by-step guide. It uses `ReactMarkdown` to render text, code blocks, and custom-styled journal entry tables.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+6.  **`cookieManager.js` (The Memory):**
+    *   This utility saves the user's progress (`currentScenarioId` and `completedScenarios`) into the browser's cookies. When you close the app and reopen it, this allows you to pick up right where you left off.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### The Structure of a Scenario Object
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Every problem in the application is defined by a JavaScript object with a consistent structure. This schema allows the components to easily parse and display the information. Here is a breakdown of the keys in a typical scenario from `ar-scenarios.js`:
 
-### `npm run eject`
+```javascript
+{
+  // Unique identifier for navigation and progress tracking.
+  id: "AR-01",
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+  // The accounting topic (e.g., 'ar' for Accounts Receivable).
+  topic: "ar",
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  // Determines the problem type and which input component to load.
+  // Level 1: Numeric answer (e.g., calculate a single value).
+  // Level 2: Journal entry answer.
+  level: 1,
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+  // The question or instruction presented to the user.
+  task: "Calculate bad debt expense using the percentage‑of‑credit‑sales method.",
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+  // An object containing all the raw numbers and data needed to solve the problem.
+  data: {
+    creditSales: 500000,
+    estimatedBadDebtRate: 0.03
+  },
 
-## Learn More
+  // An object defining the correct answer for validation.
+  solution: {
+    // The type of solution, matching the 'level'.
+    type: "numeric",
+    // The correct numeric value.
+    value: 15000,
+    // The margin of error allowed for the user's answer.
+    tolerance: 1,
+    // A label for the numeric solution.
+    label: "Bad Debt Expense"
+  },
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  // A detailed, step-by-step explanation of the theory, calculation, and journal entries.
+  // This is a markdown string that gets rendered in the SolutionComponent.
+  explanation: "### Theory: ...\n\n### Calculation\n...",
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+  // A short message displayed to the user upon successful completion.
+  successMessage: "Correct—the percentage‑of‑sales method gives 15000."
+}
+```
 
-### Code Splitting
+### Component and Data Flow Diagram
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+This diagram illustrates how data flows from the main `App.js` component to the various child components.
 
-### Analyzing the Bundle Size
+```mermaid
+graph TD
+    subgraph "Data Layer"
+        scenarios["ar-scenarios.js"]
+        cookies["Browser Cookies"]
+    end
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+    subgraph "Application Core"
+        App["App.js (State & Logic)"]
+    end
 
-### Making a Progressive Web App
+    subgraph "UI Components"
+        Header["Header.js"]
+        ScenarioDetails["ScenarioDetails.js"]
+        InputComponent["Input Component (e.g., JournalEntryForm)"]
+        Solution["SolutionComponent.js"]
+    end
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+    cookies -- "Load Progress" --> App
+    scenarios -- "Load Scenarios" --> App
 
-### Advanced Configuration
+    App -- "currentId, progress" --> Header
+    App -- "Scenario Task & Data" --> ScenarioDetails
+    App -- "Scenario Level" --> InputComponent
+    App -- "Scenario Solution & Explanation" --> Solution
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+    InputComponent -- "User Submission" --> App
+    App -- "Persist Progress" --> cookies
+```

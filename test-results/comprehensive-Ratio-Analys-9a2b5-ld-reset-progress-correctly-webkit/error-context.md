@@ -1,0 +1,48 @@
+# Page snapshot
+
+```yaml
+- banner:
+  - text: "Progress: 1/21 Scenarios 25% 50% 75% 100% Mastery: 5.0%"
+  - button "Reset Progress"
+- heading "Your Task" [level=4]
+- paragraph: Calculate the current ratio (round to 2 decimal places).
+- heading "Financial Information:" [level=3]
+- list:
+  - listitem: Current Assets $180,000
+  - listitem: Current Liabilities $90,000
+  - listitem: Net Income $25,000
+  - listitem: Property Plant Equipment $270,000
+  - listitem: Long Term Debt $120,000
+  - listitem: Total Assets $450,000
+  - listitem: Retained Earnings $140,000
+  - listitem: Operating Expenses $180,000
+  - listitem: Cost Of Goods Sold $200,000
+  - listitem: Common Stock $100,000
+  - listitem: Net Sales $320,000
+- heading "Your Calculation" [level=3]
+- text: "Your Answer:"
+- spinbutton "Your Answer:": "2"
+- button "Submit Answer" [disabled]
+- paragraph: Correct! A current ratio of 2.00 indicates strong short-term liquidity.
+- button "Continue"
+- heading "Solution" [level=4]
+- paragraph: "Correct Answer: 2"
+- 'heading "Theory: Current Ratio Analysis" [level=3]'
+- paragraph: The current ratio measures a company's ability to pay short-term obligations with short-term assets. It's calculated as Current Assets ÷ Current Liabilities. A ratio above 1.0 indicates the company has more current assets than current liabilities.
+- heading "Relevant Information Identification" [level=3]
+- paragraph: "From the financial data provided, only these items are needed:"
+- list:
+  - listitem:
+    - strong: "Current Assets:"
+    - text: $180,000
+  - listitem:
+    - strong: "Current Liabilities:"
+    - text: $90,000
+- paragraph: The other data (total assets, long-term debt, sales, net income, etc.) are irrelevant for this calculation.
+- heading "Calculation" [level=3]
+- code: Current Ratio = Current Assets ÷ Current Liabilities = $180,000 ÷ $90,000 = 2.00
+- heading "Interpretation" [level=3]
+- paragraph: A current ratio of 2.00 means the company has $2.00 of current assets for every $1.00 of current liabilities, indicating strong short-term liquidity.
+- button "Previous" [disabled]
+- button "Next"
+```

@@ -1,87 +1,41 @@
-// src/components/Solution.js
 import React from 'react';
-import { formatCurrency } from '../utils/formatUtils';
-import '../styles/Solution.css';
+import ReactMarkdown from 'react-markdown';
+import './../styles/Solution.css';
 
-const Solution = ({ scenario }) => {
-  // Calculate totals of the solution
-  const totalDebit = scenario.solution.reduce(
-    (sum, line) => sum + (line.debit || 0), 0
-  );
-  
-  const totalCredit = scenario.solution.reduce(
-    (sum, line) => sum + (line.credit || 0), 0
-  );
-  
+function SolutionComponent({ scenario, showExplanation }) {
+  const { solution } = scenario;
+  const explanation = scenario.explanation || solution.explanation;
+
+  const renderSolution = () => {
+    if (solution.type === 'numeric') {
+      return (
+        <div className="correct-answer-box">
+          Correct Answer: <strong>{solution.value}</strong>
+        </div>
+      );
+    }
+    if (solution.type === 'multiple_choice') {
+      const correctOption = scenario.options.find(opt => opt.id === solution.correct);
+      return (
+        <div className="correct-answer-box">
+          Correct Answer: <strong>{solution.correct} - {correctOption?.text}</strong>
+        </div>
+      );
+    }
+    return <p>Details not available.</p>;
+  };
+
   return (
     <div className="solution-container">
-      <h3 className="solution-heading">Solution:</h3>
-      
-      <table className="solution-table">
-        <thead>
-          <tr>
-            <th>Account</th>
-            <th>Debit</th>
-            <th>Credit</th>
-          </tr>
-        </thead>
-        <tbody>
-          {scenario.solution.map((line, index) => (
-            <tr key={index} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-              <td>{line.account}</td>
-              <td>{line.debit ? formatCurrency(line.debit) : ''}</td>
-              <td>{line.credit ? formatCurrency(line.credit) : ''}</td>
-            </tr>
-          ))}
-          
-          {/* Totals row */}
-          <tr className="solution-table-totals">
-            <td>Total</td>
-            <td>{formatCurrency(totalDebit)}</td>
-            <td>{formatCurrency(totalCredit)}</td>
-          </tr>
-        </tbody>
-      </table>
-      
-      {scenario.keyCalculations && (
-        <div className="calculations-container">
-          <p className="calculations-heading">Key Calculations:</p>
-          {scenario.leaseType === 'operating' ? (
-            <>
-              {scenario.keyCalculations.interest !== undefined && (
-                <p className="calculation-item">
-                  Interest: {formatCurrency(scenario.initialLeaseLiability)} × {scenario.interestRate * 100}% = {formatCurrency(scenario.keyCalculations.interest)}
-                </p>
-              )}
-              <p className="calculation-item">
-                Lease expense (single line item): {formatCurrency(scenario.keyCalculations.leaseExpense)}
-              </p>
-              <p className="calculation-item">
-                ROU Asset amortization: {formatCurrency(scenario.keyCalculations.rouAssetAmortization)}
-              </p>
-              <p className="calculation-item">
-                Liability reduction: {formatCurrency(scenario.keyCalculations.liabilityReduction)}
-              </p>
-            </>
-          ) : (
-            <>
-              {scenario.keyCalculations.interestExpense !== undefined && (
-                <p className="calculation-item">
-                  Interest expense: {formatCurrency(scenario.initialLeaseLiability)} × {scenario.interestRate * 100}% = {formatCurrency(scenario.keyCalculations.interestExpense)}
-                </p>
-              )}
-              <p className="calculation-item">
-                Principal reduction: {formatCurrency(scenario.keyCalculations.principalReduction)}
-              </p>
-              <p className="calculation-item">
-                Amortization expense (ROU Asset): {formatCurrency(scenario.keyCalculations.amortizationExpense)}
-              </p>
-            </>
-          )}
+      <h4>Solution</h4>
+      {renderSolution()}
+      {showExplanation && explanation && (
+        <div className="explanation">
+          <ReactMarkdown>{explanation}</ReactMarkdown>
         </div>
       )}
     </div>
   );
-};
+}
 
-export default Solution;
+export default SolutionComponent;

@@ -1,149 +1,158 @@
-/* src/styles/App.css */
+/* General App Styles */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/* Import Component-Specific Styles */
+@import './Header.css';
+@import './ScenarioDetails.css';
+@import './Solution.css';
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+  --primary-color: #007bff;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --error-color: #dc3545;
+  --light-bg: #f8f9fa;
+  --dark-text: #343a40;
+  --light-text: #6c757d;
+  --border-color: #dee2e6;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f9f9f9;
+    color: #333;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.6;
+}
+
 .app-container {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding: 20px;
 }
 
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
-
-.app-header {
-  padding: 1rem;
-  background-color: #207bb5;
-  color: white;
-}
-
-.app-header h1 {
-  margin-bottom: 0.5rem;
-  color: white;
-}
-
-.header-buttons {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  align-items: center;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: auto;
 }
 
-.header-buttons button {
-  padding: 0.25rem 0.75rem;
-  background-color: #207bb5;
-  color: white;
-  border: 1px solid white;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.header-buttons button:hover {
-  background-color: #1a6899;
-}
-
-.scenario-number {
-  margin-left: 0.5rem;
-  padding: 0.25rem;
-  color: #4b556a;
-}
-
-.app-progress {
-  margin-top: 1rem;
-  padding: 0.5rem;
-  background-color: #f0f0f0;
-  border-radius: 4px;
-}
-
-.progress-bar {
-  height: 8px;
-  background-color: #ddd;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background-color: #28a745;
-  transition: width 0.3s ease;
-}
-
-.reset-button {
-  margin-top: 0.5rem;
-  background-color: #6c757d;
-  color: white;
+/* Button Styles */
+.btn-primary, .btn-secondary, .btn-submit {
   border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
   cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.reset-button:hover {
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.btn-primary:disabled {
+  background-color: #a1c9f5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.btn-secondary:hover {
   background-color: #5a6268;
 }
 
-/* Feedback message styling */
-.feedback-message {
-  margin: 20px 0;
-  padding: 15px;
-  border-radius: 8px;
-  text-align: center;
-  font-weight: bold;
-  animation: fadeIn 0.5s ease-in;
+/* Feedback Styles */
+.feedback {
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  border: 1px solid;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.feedback-message.success {
+.feedback.correct {
   background-color: #d4edda;
+  border-color: #c3e6cb;
   color: #155724;
-  border: 1px solid #c3e6cb;
 }
 
-.feedback-message.error {
+.feedback.incorrect {
   background-color: #f8d7da;
+  border-color: #f5c6cb;
   color: #721c24;
-  border: 1px solid #f5c6cb;
 }
 
-.level-complete-message {
-  margin: 20px 0;
-  padding: 20px;
+.feedback p {
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Navigation & Solution Controls */
+.navigation-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.navigation-controls .btn-primary {
+    background-color: #007bff;
+}
+
+.navigation-controls .btn-secondary {
+    background-color: #6c757d;
+}
+
+.solution-controls {
+  justify-content: flex-start;
+  border-top: none;
+  padding-top: 0;
+  margin-top: -1rem; /* Pull it up closer to the input component */
+}
+
+.completion-dialog {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
+  padding: 40px;
   text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-  background: linear-gradient(135deg, #00b09b, #96c93d);
-  color: white;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  animation: fadeIn 0.5s ease-in;
+  margin: 20px auto;
+  max-width: 500px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.completion-dialog h2 {
+  font-size: 2em;
+  color: #4CAF50;
+  margin-bottom: 15px;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .app-container {
-    padding: 1rem;
-  }
-
-  .container {
-    padding: 10px;
-  }
-  
-  .level-complete-message {
-    font-size: 20px;
-    padding: 15px;
-  }
+.completion-dialog p {
+  font-size: 1.2em;
+  color: #333;
+  margin-bottom: 25px;
 }
