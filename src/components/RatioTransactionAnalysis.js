@@ -16,10 +16,6 @@ function RatioTransactionAnalysis({ scenario, onSubmit, isCorrect, showFeedback,
     onSubmit(selectedOption);
   };
 
-  const handleOptionChange = (optionId) => {
-    setSelectedOption(optionId);
-  };
-
   const { options } = scenario;
 
   return (
