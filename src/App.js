@@ -124,6 +124,7 @@ function App() {
   return (
     <div className="app-container">
       <Header
+        title="Ratio Analysis Practice"
         currentIndex={currentScenarioIndex}
         totalScenarios={scenarios.length}
         progressPercentage={progressPercentage}

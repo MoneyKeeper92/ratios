@@ -7,6 +7,7 @@ function Header({ title, currentIndex, totalScenarios, progressPercentage, compl
 
   return (
     <header className="header">
+      <h1>{title}</h1>
       <div className="header-content">
         <div className="progress-info">
           <div className="progress-text">Progress: {completedCount}/{totalScenarios} Scenarios</div>
